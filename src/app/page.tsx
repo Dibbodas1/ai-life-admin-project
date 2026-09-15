@@ -153,6 +153,13 @@ export default function DashboardPage() {
   };
 
   const savingsRate = d.totalIncome > 0 ? Math.round(((d.totalIncome - d.totalExpenses) / d.totalIncome) * 100) : 0;
+  const primaryGoal = d.activeGoals && d.activeGoals.length > 0 ? d.activeGoals[0] : null;
+  const goalTarget = primaryGoal ? Number(primaryGoal.target) || 0 : 0;
+  const goalCurrent = primaryGoal ? Number(primaryGoal.current) || d.totalLiquidity : d.totalLiquidity;
+  const goalPercent = goalTarget > 0 ? Math.min(100, Math.round((goalCurrent / goalTarget) * 100)) : 0;
+  const daysInCurrentMonth = Math.max(1, new Date().getDate());
+  const dailyBurnAverage = Math.round(d.totalExpenses / daysInCurrentMonth);
+  const peakTrend = Math.max(0, ...(d.cashFlowTrend.map(t => Math.max(t.income || 0, t.expense || 0, t.net || 0))), d.totalLiquidity);
 
   // Donut chart data
   const donutData = Object.entries(d.categorySpending || {}).map(([name, value]) => ({ name, value }));
@@ -308,9 +315,23 @@ export default function DashboardPage() {
           </div>
 
           <div style={{ marginTop: "12px", display: "flex", alignItems: "center", gap: "8px" }}>
-            <span className="badge-pill badge-pill-orange">
-              +10% From Last Month
-            </span>
+            {d.totalExpenses === 0 ? (
+              <span className="badge-pill" style={{
+                background: "rgba(255, 255, 255, 0.06)",
+                color: "var(--text-muted)",
+                border: "1px solid rgba(255, 255, 255, 0.08)",
+                fontSize: "11.5px",
+                padding: "3px 10px",
+                borderRadius: "9999px",
+                fontWeight: 600,
+              }}>
+                No Outflow Recorded
+              </span>
+            ) : (
+              <span className="badge-pill badge-pill-orange">
+                {formatCurrency(dailyBurnAverage)}/day avg
+              </span>
+            )}
             <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>
               {d.recentActivity.filter(a => a.type === "expense").length} Transactions
             </span>
@@ -358,9 +379,23 @@ export default function DashboardPage() {
           </div>
 
           <div style={{ marginTop: "12px", display: "flex", alignItems: "center", gap: "8px" }}>
-            <span className="badge-pill badge-pill-green">
-              +12% From Last Month
-            </span>
+            {d.totalIncome === 0 ? (
+              <span className="badge-pill" style={{
+                background: "rgba(255, 255, 255, 0.06)",
+                color: "var(--text-muted)",
+                border: "1px solid rgba(255, 255, 255, 0.08)",
+                fontSize: "11.5px",
+                padding: "3px 10px",
+                borderRadius: "9999px",
+                fontWeight: 600,
+              }}>
+                No Inflow Recorded
+              </span>
+            ) : (
+              <span className="badge-pill badge-pill-green">
+                {savingsRate}% Retained
+              </span>
+            )}
             <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>
               Net surplus: +{formatCurrency(d.currentAvailable)}
             </span>
@@ -400,18 +435,30 @@ export default function DashboardPage() {
               <span style={{
                 fontSize: "11px",
                 fontWeight: 700,
-                color: "#E9D5FF",
+                color: primaryGoal ? "#E9D5FF" : "#94A3B8",
                 background: "rgba(255, 255, 255, 0.12)",
                 padding: "3px 8px",
                 borderRadius: "9999px",
               }}>
-                Target 2026
+                {primaryGoal ? primaryGoal.name : "No Target Set"}
               </span>
             </div>
 
-            <div style={{ fontSize: "22px", fontWeight: 800, letterSpacing: "-0.5px" }}>
-              {formatCurrency(d.totalLiquidity)} <span style={{ fontSize: "14px", color: "#C084FC", fontWeight: 500 }}>/ $150,000.00</span>
-            </div>
+            {primaryGoal && goalTarget > 0 ? (
+              <div style={{ fontSize: "22px", fontWeight: 800, letterSpacing: "-0.5px" }}>
+                {formatCurrency(goalCurrent)}{" "}
+                <span style={{ fontSize: "14px", color: "#C084FC", fontWeight: 500 }}>
+                  / {formatCurrency(goalTarget)}
+                </span>
+              </div>
+            ) : (
+              <div style={{ fontSize: "20px", fontWeight: 800, letterSpacing: "-0.5px" }}>
+                {formatCurrency(d.totalLiquidity)}{" "}
+                <span style={{ fontSize: "13px", color: "#C084FC", fontWeight: 500 }}>
+                  Liquid Reserves
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Progress Bar with Cyan active indicator */}
@@ -425,15 +472,38 @@ export default function DashboardPage() {
             }}>
               <div style={{
                 height: "100%",
-                width: `${Math.min(100, Math.round((d.totalLiquidity / 150000) * 100))}%`,
+                width: `${goalPercent}%`,
                 background: "linear-gradient(90deg, #06B6D4 0%, #3B82F6 100%)",
                 borderRadius: "9999px",
+                transition: "width 0.5s ease",
               }} />
             </div>
 
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "8px", fontSize: "12px", color: "#E9D5FF" }}>
-              <span style={{ fontWeight: 700 }}>{Math.min(100, Math.round((d.totalLiquidity / 150000) * 100))}% Saved</span>
-              <span>{savingsRate}% Retention Rate</span>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "8px", fontSize: "12px", color: "#E9D5FF" }}>
+              {primaryGoal && goalTarget > 0 ? (
+                <>
+                  <span style={{ fontWeight: 700 }}>{goalPercent}% Saved</span>
+                  <span>{savingsRate}% Retention Rate</span>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/goals"
+                    style={{
+                      color: "#38BDF8",
+                      textDecoration: "none",
+                      fontWeight: 600,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <span>Set Target in Goals</span>
+                    <ArrowUpRight size={12} />
+                  </Link>
+                  <span style={{ color: "#C084FC" }}>{savingsRate}% Retention</span>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -464,11 +534,21 @@ export default function DashboardPage() {
               </div>
 
               <div style={{ marginTop: "4px", display: "flex", alignItems: "center", gap: "8px" }}>
-                <span className="badge-pill badge-pill-green">
-                  +15% Balance Increase
-                </span>
+                {d.totalLiquidity === 0 ? (
+                  <span className="badge-pill" style={{
+                    background: "rgba(255, 255, 255, 0.06)",
+                    color: "var(--text-muted)",
+                    border: "1px solid rgba(255, 255, 255, 0.08)",
+                  }}>
+                    0 Liquid Reserves
+                  </span>
+                ) : (
+                  <span className="badge-pill badge-pill-green">
+                    {d.wallets.length} Active {d.wallets.length === 1 ? "Wallet" : "Wallets"}
+                  </span>
+                )}
                 <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>
-                  Healthy runway across {d.wallets.length} accounts
+                  {d.wallets.length > 0 ? `Synced across ${d.wallets.length} accounts` : "Connect Google Drive to load accounts"}
                 </span>
               </div>
             </div>
@@ -511,7 +591,7 @@ export default function DashboardPage() {
                 fontWeight: 700,
                 color: "#A5B4FC",
               }}>
-                <span>Peak: Highest $104,750</span>
+                <span>{peakTrend > 0 ? `Peak: ${formatCurrency(peakTrend)}` : "Real-Time Tracking"}</span>
               </div>
             </div>
 

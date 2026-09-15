@@ -7,7 +7,7 @@ import GoogleLoginButton from "@/components/shared/GoogleLoginButton";
 import {
   LayoutDashboard, Wallet, TrendingUp, Receipt,
   HandCoins, Sparkles, Target, Bot, CalendarClock,
-  ArrowUpRight, ShieldCheck, CreditCard, X
+  X
 } from "lucide-react";
 
 const navSections = [
@@ -203,58 +203,10 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* Promo Card: "Level Up Your Savings" (Frosted Dark Glass) */}
-      <div style={{
-        marginTop: "20px",
-        marginBottom: "16px",
-        padding: "16px",
-        borderRadius: "18px",
-        background: "rgba(255, 255, 255, 0.04)",
-        backdropFilter: "blur(12px)",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
-        position: "relative",
-        overflow: "hidden",
-      }}>
-        <div style={{
-          position: "absolute",
-          top: "-20px",
-          right: "-20px",
-          width: "70px",
-          height: "70px",
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(249, 115, 22, 0.3) 0%, transparent 70%)",
-        }} />
-        <div style={{ fontSize: "13px", fontWeight: 700, color: "#F8FAFC", marginBottom: "4px" }}>
-          Level Up Your Savings
-        </div>
-        <p style={{ fontSize: "11px", color: "#94A3B8", lineHeight: 1.4, marginBottom: "12px" }}>
-          You&apos;re 68% towards your quarterly target! Challenge yourself to save more this month.
-        </p>
-        <Link
-          href="/goals"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "6px",
-            background: "linear-gradient(135deg, #F97316 0%, #EA580C 100%)",
-            color: "#FFFFFF",
-            padding: "8px 14px",
-            borderRadius: "9999px",
-            fontSize: "12px",
-            fontWeight: 700,
-            textDecoration: "none",
-            boxShadow: "0 4px 14px rgba(234, 88, 12, 0.4)",
-            transition: "all 0.2s ease",
-          }}
-        >
-          <span>Upgrade Goal</span>
-          <ArrowUpRight size={13} />
-        </Link>
-      </div>
-
       {/* User & Auth */}
       <div style={{
-        paddingTop: "14px",
+        marginTop: "auto",
+        paddingTop: "16px",
         borderTop: "1px solid rgba(255, 255, 255, 0.08)",
         display: "flex",
         alignItems: "center",
