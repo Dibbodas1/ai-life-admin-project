@@ -1,0 +1,31 @@
+{
+  "users": [
+    {
+      "_id": "demo_user_alex",
+      "name": "Alex Chen",
+      "email": "alex@demo.com",
+      "image": "",
+      "currency": "USD",
+      "preferences": {
+        "budgetingStyle": "monthly",
+        "reminderDays": 3,
+        "theme": "dark"
+      }
+    }
+  ],
+  "expenses": [],
+  "income": [],
+  "categories": [],
+  "budgets": [],
+  "subscriptions": [],
+  "bills": [],
+  "financialGoals": [],
+  "lifeAdminTasks": [],
+  "documents": [],
+  "insights": [],
+  "alerts": [],
+  "loans": [],
+  "wallets": [],
+  "walletTransfers": [],
+  "monthlyPlans": []
+}
