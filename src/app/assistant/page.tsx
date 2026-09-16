@@ -424,7 +424,7 @@ export default function AssistantPage() {
                 }}
               >
                 <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#10B981" }} />
-                GEMINI 2.5 FLASH ACTIVE
+                GEMINI 3.5 FLASH ACTIVE
               </span>
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px", marginTop: 4 }}>

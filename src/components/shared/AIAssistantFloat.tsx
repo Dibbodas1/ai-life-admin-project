@@ -210,7 +210,7 @@ export default function AIAssistantFloat() {
                   </span>
                 </div>
                 <div style={{ fontSize: 11, color: "#94A3B8", display: "flex", alignItems: "center", gap: 6, marginTop: 1 }}>
-                  <span>Gemini 2.5 Flash</span>
+                  <span>Gemini 3.5 Flash</span>
                   <span>•</span>
                   <span style={{ color: "#A5B4FC" }}>EN / Banglish</span>
                 </div>
