@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 export default function TelegramSettingsPage() {
-  const { token } = useGoogleAuthToken();
+  const { token, userKey } = useGoogleAuthToken();
   const [linkStatus, setLinkStatus] = useState<{
     linked: boolean;
     telegramId?: number;
@@ -27,12 +27,12 @@ export default function TelegramSettingsPage() {
   const [copied, setCopied] = useState(false);
 
   const checkLinkStatus = useCallback(async () => {
-    if (!token || token === "demo_token" || token === "dummy_demo_token") {
+    if (!token || token === "demo_token" || token === "dummy_demo_token" || !userKey) {
       setCheckingStatus(false);
       return;
     }
     try {
-      const res = await fetch(`/api/telegram/link?token=${token}`);
+      const res = await fetch(`/api/telegram/link?userKey=${userKey}`);
       const data = await res.json();
       setLinkStatus(data);
     } catch {
@@ -40,7 +40,7 @@ export default function TelegramSettingsPage() {
     } finally {
       setCheckingStatus(false);
     }
-  }, [token]);
+  }, [token, userKey]);
 
   useEffect(() => {
     checkLinkStatus();
@@ -52,7 +52,7 @@ export default function TelegramSettingsPage() {
       const res = await fetch("/api/telegram/link", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ googleAccessToken: token }),
+        body: JSON.stringify({ userKey }),
       });
       const data = await res.json();
       if (data.code) {

@@ -48,8 +48,8 @@ function fmt(n: number): string {
 
 // ── Quick command handlers (instant, no AI needed) ──────────────────────────
 
-async function handleSummary(chatId: number, link: TelegramLink) {
-  const { data } = await getDriveData(link.googleAccessToken);
+async function handleSummary(chatId: number, accessToken: string) {
+  const { data } = await getDriveData(accessToken);
   const today = new Date().toISOString().split("T")[0];
   const thisMonth = today.slice(0, 7);
 
@@ -90,8 +90,8 @@ async function handleSummary(chatId: number, link: TelegramLink) {
   );
 }
 
-async function handleBalance(chatId: number, link: TelegramLink) {
-  const { data } = await getDriveData(link.googleAccessToken);
+async function handleBalance(chatId: number, accessToken: string) {
+  const { data } = await getDriveData(accessToken);
   if (data.wallets.length === 0) {
     await sendMessage(chatId, `🏦 No wallets found.\n\nCreate one by saying:\n<i>"create wallet IBBL bank with 5000"</i>`);
     return;
@@ -114,8 +114,8 @@ async function handleBalance(chatId: number, link: TelegramLink) {
   );
 }
 
-async function handleExpenses(chatId: number, link: TelegramLink) {
-  const { data } = await getDriveData(link.googleAccessToken);
+async function handleExpenses(chatId: number, accessToken: string) {
+  const { data } = await getDriveData(accessToken);
   const recent = [...data.expenses]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5);
@@ -146,8 +146,8 @@ async function handleExpenses(chatId: number, link: TelegramLink) {
   );
 }
 
-async function handleGoals(chatId: number, link: TelegramLink) {
-  const { data } = await getDriveData(link.googleAccessToken);
+async function handleGoals(chatId: number, accessToken: string) {
+  const { data } = await getDriveData(accessToken);
   const activeGoals = data.financialGoals.filter(g => g.status === "active");
 
   if (activeGoals.length === 0) {
@@ -176,8 +176,8 @@ async function handleGoals(chatId: number, link: TelegramLink) {
   );
 }
 
-async function handleTasks(chatId: number, link: TelegramLink) {
-  const { data } = await getDriveData(link.googleAccessToken);
+async function handleTasks(chatId: number, accessToken: string) {
+  const { data } = await getDriveData(accessToken);
   const pending = data.lifeAdminTasks
     .filter(t => t.status === "pending" || t.status === "in_progress")
     .sort((a, b) => {
@@ -208,8 +208,8 @@ async function handleTasks(chatId: number, link: TelegramLink) {
   );
 }
 
-async function handleWallets(chatId: number, link: TelegramLink) {
-  await handleBalance(chatId, link); // same as balance but reuse
+async function handleWallets(chatId: number, accessToken: string) {
+  await handleBalance(chatId, accessToken); // same as balance but reuse
 }
 
 // ── Main Webhook ──────────────────────────────────────────────────────────────
@@ -253,14 +253,14 @@ export async function POST(req: NextRequest) {
         await sendMessage(chatId, `❌ Please send: <code>/link 123456</code>\n\nGet your code from <b>Settings → Telegram Bot</b> in the web app.`);
         return NextResponse.json({ ok: true });
       }
-      const googleAccessToken = await redis.get<string>(PENDING_LINK_KEY(code));
-      if (!googleAccessToken) {
+      const userKey = await redis.get<string>(PENDING_LINK_KEY(code));
+      if (!userKey) {
         await sendMessage(chatId, `❌ Code expired or not found.\n\nCodes last <b>10 minutes</b>. Please generate a new one from the app.`);
         return NextResponse.json({ ok: true });
       }
-      const link: TelegramLink = { telegramId, telegramUsername: username, googleAccessToken, linkedAt: new Date().toISOString() };
+      const link: TelegramLink = { telegramId, telegramUsername: username, userKey, linkedAt: new Date().toISOString() };
       await redis.set(TELEGRAM_LINK_KEY(telegramId), link, { ex: 60 * 60 * 24 * 30 });
-      await redis.set(`tg:user:${googleAccessToken}`, telegramId, { ex: 60 * 60 * 24 * 30 });
+      await redis.set(`tg:user:${userKey}`, telegramId, { ex: 60 * 60 * 24 * 30 });
       await redis.del(PENDING_LINK_KEY(code));
       await sendMessage(chatId,
         `✅ <b>Successfully linked!</b>\n\n` +
@@ -310,12 +310,35 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Quick commands (instant, no AI) ────────────────────────────────────
-    if (text === "/summary") { await handleSummary(chatId, link); return NextResponse.json({ ok: true }); }
-    if (text === "/balance") { await handleBalance(chatId, link); return NextResponse.json({ ok: true }); }
-    if (text === "/expenses") { await handleExpenses(chatId, link); return NextResponse.json({ ok: true }); }
-    if (text === "/goals") { await handleGoals(chatId, link); return NextResponse.json({ ok: true }); }
-    if (text === "/tasks") { await handleTasks(chatId, link); return NextResponse.json({ ok: true }); }
-    if (text === "/wallets") { await handleWallets(chatId, link); return NextResponse.json({ ok: true }); }
+    
+    // Fetch fresh access token via userKey
+    let accessToken = (link as any).googleAccessToken; // backward compat for users who linked before this fix
+    if (link.userKey) {
+      const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+      try {
+        const tokenRes = await fetch(`${baseUrl}/api/auth/token?key=${link.userKey}`);
+        if (tokenRes.ok) {
+          const data = await tokenRes.json();
+          if (data.access_token) {
+            accessToken = data.access_token;
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch fresh access token", err);
+      }
+    }
+
+    if (!accessToken) {
+      await sendMessage(chatId, `⚠️ Session expired or invalid. Please re-link your Telegram account from the web app.`);
+      return NextResponse.json({ ok: true });
+    }
+
+    if (text === "/summary") { await handleSummary(chatId, accessToken); return NextResponse.json({ ok: true }); }
+    if (text === "/balance") { await handleBalance(chatId, accessToken); return NextResponse.json({ ok: true }); }
+    if (text === "/expenses") { await handleExpenses(chatId, accessToken); return NextResponse.json({ ok: true }); }
+    if (text === "/goals") { await handleGoals(chatId, accessToken); return NextResponse.json({ ok: true }); }
+    if (text === "/tasks") { await handleTasks(chatId, accessToken); return NextResponse.json({ ok: true }); }
+    if (text === "/wallets") { await handleWallets(chatId, accessToken); return NextResponse.json({ ok: true }); }
 
     // ── Typing indicator then pipe to full AI assistant ────────────────────
     await fetch(`${TELEGRAM_API}/sendChatAction`, {
@@ -329,7 +352,7 @@ export async function POST(req: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${link.googleAccessToken}`,
+        "Authorization": `Bearer ${accessToken}`,
       },
       body: JSON.stringify({ message: text, history: [] }),
     });

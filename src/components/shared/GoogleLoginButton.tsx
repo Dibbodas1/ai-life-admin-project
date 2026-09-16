@@ -1,17 +1,20 @@
 "use client";
 
 import { useGoogleLogin } from "@react-oauth/google";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { LogIn, LogOut, Loader2, HardDrive, CheckCircle2 } from "lucide-react";
 
 export function useGoogleAuthToken() {
   const [token, setToken] = useState<string | null>(null);
+  const [userKey, setUserKey] = useState<string | null>(null);
   const [isExpired, setIsExpired] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem("google_drive_token");
+    const storedKey = localStorage.getItem("google_user_key");
     if (stored) {
       setToken(stored);
+      if (storedKey) setUserKey(storedKey);
       if (stored !== "dummy_demo_token" && stored !== "demo_token") {
         const expiresAt = Number(localStorage.getItem("google_drive_token_expires_at") || "0");
         // If it doesn't have an expiration (legacy), or is past expiration (with 1min buffer)
@@ -22,30 +25,71 @@ export function useGoogleAuthToken() {
     }
   }, []);
 
-  const saveToken = (t: string, expiresIn?: number) => {
+  const saveToken = useCallback((t: string, expiresIn?: number, uKey?: string) => {
     localStorage.setItem("google_drive_token", t);
+    if (uKey) {
+      localStorage.setItem("google_user_key", uKey);
+      setUserKey(uKey);
+    }
     if (t !== "dummy_demo_token" && t !== "demo_token") {
       const expiresAt = Date.now() + (expiresIn || 3599) * 1000;
       localStorage.setItem("google_drive_token_expires_at", expiresAt.toString());
     } else {
       localStorage.removeItem("google_drive_token_expires_at");
+      localStorage.removeItem("google_user_key");
+      setUserKey(null);
     }
     setToken(t);
     setIsExpired(false);
-  };
+  }, []);
 
-  const clearToken = () => {
+  const clearToken = useCallback(() => {
     localStorage.removeItem("google_drive_token");
     localStorage.removeItem("google_drive_token_expires_at");
+    localStorage.removeItem("google_user_key");
     setToken(null);
+    setUserKey(null);
     setIsExpired(false);
-  };
+  }, []);
 
-  return { token, isExpired, saveToken, clearToken };
+  // Auto-refresh logic
+  useEffect(() => {
+    if (!token || token === "dummy_demo_token" || token === "demo_token" || !userKey) return;
+
+    const checkRefresh = async () => {
+      const expiresAt = Number(localStorage.getItem("google_drive_token_expires_at") || "0");
+      // Refresh if expiring in less than 5 minutes
+      if (expiresAt && Date.now() >= expiresAt - 300000) {
+        try {
+          const res = await fetch("/api/auth/refresh", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userKey }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.access_token) {
+              saveToken(data.access_token, data.expires_in, userKey);
+              window.dispatchEvent(new CustomEvent("google_token_refreshed"));
+            }
+          } else {
+            setIsExpired(true);
+          }
+        } catch (err) {
+          console.error("Auto-refresh failed", err);
+        }
+      }
+    };
+
+    const intervalId = setInterval(checkRefresh, 60000); // Check every minute
+    return () => clearInterval(intervalId);
+  }, [token, userKey, saveToken]);
+
+  return { token, userKey, isExpired, saveToken, clearToken };
 }
 
 export default function GoogleLoginButton() {
-  const { token, isExpired, saveToken, clearToken } = useGoogleAuthToken();
+  const { token, userKey, isExpired, saveToken, clearToken } = useGoogleAuthToken();
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -53,11 +97,30 @@ export default function GoogleLoginButton() {
   const isDemoUser = token === "dummy_demo_token" || token === "demo_token";
 
   const login = useGoogleLogin({
-    onSuccess: (tokenResponse) => {
-      setErrorMsg(null);
-      saveToken(tokenResponse.access_token, tokenResponse.expires_in);
-      setLoading(false);
-      window.location.reload(); // Reload to sync with Google Drive data
+    flow: "auth-code",
+    onSuccess: async (codeResponse) => {
+      try {
+        setErrorMsg(null);
+        const res = await fetch("/api/auth/google-callback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            code: codeResponse.code,
+            redirectUri: "postmessage",
+          }),
+        });
+        
+        if (!res.ok) throw new Error("Failed to exchange code");
+        
+        const data = await res.json();
+        saveToken(data.access_token, data.expires_in, data.userKey);
+        setLoading(false);
+        window.location.reload(); // Reload to sync with Google Drive data
+      } catch (err) {
+        console.error("Token exchange failed:", err);
+        setErrorMsg("Failed to authenticate with Google.");
+        setLoading(false);
+      }
     },
     onError: (err) => {
       console.error("Google Login Failed:", err);

@@ -1,0 +1,179 @@
+{
+  "users": [
+    {
+      "_id": "user_1789462897989",
+      "name": "Account Holder",
+      "email": "",
+      "image": "",
+      "currency": "USD",
+      "preferences": {
+        "budgetingStyle": "monthly",
+        "reminderDays": 3,
+        "theme": "dark"
+      }
+    }
+  ],
+  "expenses": [
+    {
+      "_id": "538f0e93-bd9b-4125-ba55-622bbfbb1e48",
+      "userId": "user_1789462897989",
+      "amount": 650,
+      "merchant": "Lunch",
+      "category": "Food",
+      "walletName": "Cash",
+      "date": "2026-09-16T16:39:05.184Z"
+    }
+  ],
+  "income": [],
+  "categories": [
+    {
+      "_id": "65651b5c-468a-46fa-b17d-5208badba5d1",
+      "userId": "user_1789462897989",
+      "name": "Food",
+      "type": "expense",
+      "color": "#6366F1",
+      "icon": "tag"
+    }
+  ],
+  "budgets": [],
+  "subscriptions": [],
+  "bills": [],
+  "financialGoals": [],
+  "lifeAdminTasks": [],
+  "documents": [],
+  "insights": [],
+  "alerts": [],
+  "loans": [],
+  "wallets": [],
+  "walletTransfers": [],
+  "monthlyPlans": [],
+  "agentMemory": [
+    {
+      "_id": "336aa47c-fe72-4d04-b43c-8dfa4db56023",
+      "category": "pattern",
+      "content": "User receives daily income when going to the shop",
+      "source": "auto",
+      "confidence": 0.9,
+      "status": "active",
+      "usageCount": 0,
+      "createdAt": "2026-09-16T11:42:49.068Z",
+      "updatedAt": "2026-09-16T11:42:49.068Z",
+      "tags": [
+        "income",
+        "shop",
+        "daily"
+      ],
+      "evidence": {
+        "sourceText": "everyday i get that money if i go to shop"
+      }
+    },
+    {
+      "_id": "e5cfb664-53ee-4737-8d43-44bde5ffbf96",
+      "category": "fact",
+      "content": "User owns a shop that generates income",
+      "source": "auto",
+      "confidence": 0.95,
+      "status": "active",
+      "usageCount": 0,
+      "createdAt": "2026-09-16T11:44:20.812Z",
+      "updatedAt": "2026-09-16T11:44:20.812Z",
+      "tags": [
+        "shop",
+        "income",
+        "business"
+      ],
+      "evidence": {
+        "sourceText": "dokan er income"
+      }
+    },
+    {
+      "_id": "b0e86067-8a8c-4d00-a7c2-9d832f2dd96c",
+      "category": "rule",
+      "content": "User wants shop income saved in a wallet named Pocket Money",
+      "source": "auto",
+      "confidence": 0.95,
+      "status": "active",
+      "usageCount": 0,
+      "createdAt": "2026-09-16T11:44:20.812Z",
+      "updatedAt": "2026-09-16T11:44:20.812Z",
+      "tags": [
+        "pocket_money",
+        "wallet",
+        "savings",
+        "shop_income"
+      ],
+      "evidence": {
+        "sourceText": "amar akta wallet banao pocket money name r dokan er income oikhane save korbe"
+      }
+    },
+    {
+      "_id": "43fbebf4-9b0d-403e-a3f9-f1d01d397ee0",
+      "userId": "user_1789462897989",
+      "type": "fact",
+      "content": "User has a tuition job paying 3,500 tk per month"
+    },
+    {
+      "_id": "74e2249d-a491-4694-a20f-dcecdc762595",
+      "userId": "user_1789462897989",
+      "type": "rule",
+      "content": "User receives tuition salary by the 10th of every month"
+    },
+    {
+      "_id": "6e9e61e7-4a41-457e-a362-c9fcb45c1fa8",
+      "category": "fact",
+      "content": "User has a tuition job with a salary of 3500 tk",
+      "source": "auto",
+      "confidence": 0.95,
+      "status": "active",
+      "usageCount": 0,
+      "createdAt": "2026-09-16T12:08:09.288Z",
+      "updatedAt": "2026-09-16T12:08:09.288Z",
+      "tags": [
+        "tuition",
+        "income",
+        "salary"
+      ],
+      "evidence": {
+        "sourceText": "amar akta tuition ase jeta beton hosse 3500 tk"
+      }
+    },
+    {
+      "_id": "57b0c514-3523-42f8-a93a-589f327366f0",
+      "category": "pattern",
+      "content": "User receives tuition salary by the 10th of every month",
+      "source": "auto",
+      "confidence": 0.95,
+      "status": "active",
+      "usageCount": 0,
+      "createdAt": "2026-09-16T12:08:09.288Z",
+      "updatedAt": "2026-09-16T12:08:09.288Z",
+      "tags": [
+        "salary",
+        "income",
+        "schedule"
+      ],
+      "evidence": {
+        "sourceText": "every month ami 10 tarikh er moddhe beton pai jai"
+      }
+    },
+    {
+      "_id": "450e8e24-8c58-4518-a56e-94971cb9754e",
+      "category": "fact",
+      "content": "User has a bank account named IBBL",
+      "source": "auto",
+      "confidence": 0.95,
+      "status": "active",
+      "usageCount": 0,
+      "createdAt": "2026-09-16T15:29:53.849Z",
+      "updatedAt": "2026-09-16T15:29:53.849Z",
+      "tags": [
+        "bank",
+        "accounts",
+        "ibbl"
+      ],
+      "evidence": {
+        "sourceText": "create a wallet named IBBL which is my bank account"
+      }
+    }
+  ]
+}

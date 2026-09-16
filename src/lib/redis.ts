@@ -9,12 +9,12 @@ export const redis = new Redis({
 export const TELEGRAM_LINK_KEY = (telegramId: number) =>
   `tg:link:${telegramId}`;
 export const PENDING_LINK_KEY = (code: string) => `tg:pending:${code}`;
-export const USER_TELEGRAM_KEY = (googleToken: string) =>
-  `tg:user:${googleToken}`;
+export const USER_TELEGRAM_KEY = (userKey: string) =>
+  `tg:user:${userKey}`;
 
 export interface TelegramLink {
   telegramId: number;
   telegramUsername?: string;
-  googleAccessToken: string;
+  userKey: string;
   linkedAt: string;
 }

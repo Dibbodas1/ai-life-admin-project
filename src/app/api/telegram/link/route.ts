@@ -6,17 +6,17 @@ import crypto from "crypto";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { googleAccessToken } = body;
+    const { userKey } = body;
 
-    if (!googleAccessToken) {
+    if (!userKey) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
     // Generate a unique 6-digit code
     const code = crypto.randomInt(100000, 999999).toString();
 
-    // Store the access token under the code for 10 minutes (600 seconds)
-    await redis.set(PENDING_LINK_KEY(code), googleAccessToken, { ex: 600 });
+    // Store the user key under the code for 10 minutes (600 seconds)
+    await redis.set(PENDING_LINK_KEY(code), userKey, { ex: 600 });
 
     return NextResponse.json({ code });
   } catch (err) {
@@ -29,14 +29,14 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const googleAccessToken = searchParams.get("token");
-
-    if (!googleAccessToken) {
+    const actualUserKey = searchParams.get("userKey");
+    
+    if (!actualUserKey) {
       return NextResponse.json({ linked: false });
     }
 
     // Check if there's a telegram ID stored for this token (reverse lookup stored at linking time)
-    const telegramId = await redis.get<number>(`tg:user:${googleAccessToken}`);
+    const telegramId = await redis.get<number>(`tg:user:${actualUserKey}`);
 
     if (telegramId) {
       const link = await redis.get<TelegramLink>(TELEGRAM_LINK_KEY(telegramId));
