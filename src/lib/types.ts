@@ -209,6 +209,75 @@ export interface PlannedExpense {
   expenseId?: string;
 }
 
+// ─── Agent Memory System ───────────────────────────────────────────────────
+
+export type AgentMemoryCategory = "fact" | "preference" | "pattern" | "rule";
+export type AgentMemorySource = "auto" | "user";
+export type AgentMemoryStatus = "active" | "superseded" | "rejected";
+
+export interface AgentMemoryEntry {
+  _id: string;
+  category: AgentMemoryCategory;
+  content: string;
+  source: AgentMemorySource;
+  confidence: number; // 0–1
+  status: AgentMemoryStatus;
+  usageCount: number;
+  createdAt: string;
+  updatedAt: string;
+  lastUsedAt?: string;
+  tags: string[];
+  evidence?: {
+    conversationId?: string;
+    messageId?: string;
+    sourceText?: string;
+  };
+  relatedMemoryIds?: string[];
+}
+
+/** Candidate produced by the memory extractor before validation */
+export interface AgentMemoryCandidate {
+  category: AgentMemoryCategory;
+  content: string;
+  confidence: number;
+  tags: string[];
+  sourceText?: string;
+}
+
+// ─── Conversation State ────────────────────────────────────────────────────
+
+export interface ConversationState {
+  activeTopic?: string;
+
+  lastEntities: {
+    walletId?: string;
+    walletName?: string;
+    personName?: string;
+    expenseCategory?: string;
+    goalName?: string;
+    planTitle?: string;
+  };
+
+  pendingAction?: {
+    type: string;
+    target?: string;
+    parameters?: Record<string, unknown>;
+  };
+
+  lastToolResult?: {
+    toolName: string;
+    resultSummary?: string;
+    timestamp: string;
+  };
+
+  turnCount: number;
+  updatedAt: string;
+}
+
+// ─── Proactive Intelligence ────────────────────────────────────────────────
+
+export type ProactiveLevel = "silent" | "suggest" | "notify" | "require_confirmation";
+
 // Global App State in Google Drive
 export interface DriveAppData {
   users: User[];
@@ -227,4 +296,5 @@ export interface DriveAppData {
   wallets: Wallet[];
   walletTransfers: WalletTransfer[];
   monthlyPlans: PlannedExpense[];
+  agentMemory: AgentMemoryEntry[];
 }

@@ -1,0 +1,32 @@
+{
+  "users": [
+    {
+      "_id": "user_1789462897989",
+      "name": "Account Holder",
+      "email": "",
+      "image": "",
+      "currency": "USD",
+      "preferences": {
+        "budgetingStyle": "monthly",
+        "reminderDays": 3,
+        "theme": "dark"
+      }
+    }
+  ],
+  "expenses": [],
+  "income": [],
+  "categories": [],
+  "budgets": [],
+  "subscriptions": [],
+  "bills": [],
+  "financialGoals": [],
+  "lifeAdminTasks": [],
+  "documents": [],
+  "insights": [],
+  "alerts": [],
+  "loans": [],
+  "wallets": [],
+  "walletTransfers": [],
+  "monthlyPlans": [],
+  "agentMemory": []
+}

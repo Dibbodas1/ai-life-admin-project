@@ -3,6 +3,12 @@ import { getDriveData, saveDriveData } from "@/lib/drive-db";
 import { buildFinancialContext } from "@/lib/ai/context-builder";
 import { chatWithAssistant } from "@/lib/ai/chat";
 import { SchemaType } from "@google/generative-ai";
+import { ConversationState } from "@/lib/types";
+import { isMemoryWorthy, extractMemoryCandidates } from "@/lib/ai/memory/memory-extractor";
+import { validateCandidates } from "@/lib/ai/memory/memory-validator";
+import { deduplicateMemories } from "@/lib/ai/memory/memory-deduplicator";
+import { resolveConflictsAndMerge, applyMemoryChanges } from "@/lib/ai/memory/memory-conflict-resolver";
+import { createConversationState, updateConversationState } from "@/lib/ai/conversation/conversation-state";
 
 const tools = [{
   functionDeclarations: [{
@@ -11,7 +17,7 @@ const tools = [{
     parameters: {
       type: SchemaType.OBJECT,
       properties: {
-        collection: { type: SchemaType.STRING, description: "The collection to mutate (e.g. monthlyPlans, wallets, walletTransfers, loans, expenses, income, categories, financialGoals, OR 'all' to wipe the entire database)" },
+        collection: { type: SchemaType.STRING, description: "The collection to mutate (e.g. agentMemory, monthlyPlans, wallets, walletTransfers, loans, expenses, income, categories, financialGoals, OR 'all' to wipe the entire database)" },
         action: { type: SchemaType.STRING, description: "The action to perform: ADD, UPDATE, DELETE, CLEAR" },
         id: { type: SchemaType.STRING, description: "The exact ID of the item to update or delete" },
         query: { type: SchemaType.STRING, description: "If ID is unknown, a JSON string of properties to match the item (e.g. {\"category\": \"Pets\"} or {\"name\": \"Emergency Fund\"})" },
@@ -37,7 +43,7 @@ export async function POST(req: NextRequest) {
   try {
     const token = req.headers.get("Authorization")?.replace("Bearer ", "") || "demo_token";
 
-    const { message, history } = await req.json();
+    const { message, history, conversationState: clientConvState } = await req.json();
     if (!message) {
       return NextResponse.json({ error: "Message is required" }, { status: 400 });
     }
@@ -46,6 +52,10 @@ export async function POST(req: NextRequest) {
     if (!data.wallets) data.wallets = [];
     if (!data.walletTransfers) data.walletTransfers = [];
     if (!data.monthlyPlans) data.monthlyPlans = [];
+    if (!data.agentMemory) data.agentMemory = [];
+
+    // Hydrate or create conversation state
+    let convState: ConversationState = clientConvState || createConversationState();
 
     let hasMutated = false;
     
@@ -416,11 +426,63 @@ export async function POST(req: NextRequest) {
       }
     };
 
+    // ─── Build context & generate response ──────────────────────────────
     const context = await buildFinancialContext(data);
-    const response = await chatWithAssistant(message, context, history || [], tools, toolExecutors);
+    context.conversationState = convState;
+
+    const response = await chatWithAssistant({
+      userMessage: message,
+      context,
+      conversationHistory: history || [],
+      conversationState: convState,
+      tools,
+      toolExecutors,
+    });
+
+    // ─── Update conversation state (deterministic, fast) ────────────────
+    const toolResult = hasMutated
+      ? { toolName: "mutate_database", resultSummary: "Data modified successfully" }
+      : undefined;
+    convState = updateConversationState(convState, message, response, toolResult);
+
+    // ─── Memory extraction pipeline (async, non-blocking on failure) ────
+    let memoryCount = (data.agentMemory || []).filter(m => m.status === "active").length;
+
+    try {
+      if (isMemoryWorthy(message)) {
+        const candidates = await extractMemoryCandidates(message, response, convState);
+
+        if (candidates.length > 0) {
+          // Validate → deduplicate → resolve conflicts → persist
+          const validated = validateCandidates(candidates, data.agentMemory);
+
+          if (validated.length > 0) {
+            const dedupResult = await deduplicateMemories(data.agentMemory, validated);
+            const { memoriesToAdd, memoriesToUpdate } = resolveConflictsAndMerge(
+              data.agentMemory, dedupResult
+            );
+
+            if (memoriesToAdd.length > 0 || memoriesToUpdate.length > 0) {
+              applyMemoryChanges(data.agentMemory, memoriesToAdd, memoriesToUpdate);
+              await saveDriveData(token, data);
+              memoryCount = data.agentMemory.filter(m => m.status === "active").length;
+              console.log(`[Memory] +${memoriesToAdd.length} new, ${memoriesToUpdate.length} updated. Total active: ${memoryCount}`);
+            }
+          }
+        }
+      }
+    } catch (memErr) {
+      // Memory failure must NOT break the assistant response
+      console.error("[Memory] Extraction pipeline failed (non-fatal):", memErr);
+    }
 
     return NextResponse.json(
-      { response, mutated: hasMutated },
+      {
+        response,
+        mutated: hasMutated,
+        conversationState: convState,
+        memoryCount,
+      },
       {
         headers: {
           "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",

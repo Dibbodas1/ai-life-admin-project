@@ -24,6 +24,7 @@ export const DEFAULT_DATA: DriveAppData = {
   wallets: [],
   walletTransfers: [],
   monthlyPlans: [],
+  agentMemory: [],
 };
 
 function ensureArrays(data: any): DriveAppData {
@@ -45,6 +46,7 @@ function ensureArrays(data: any): DriveAppData {
     wallets: Array.isArray(data.wallets) ? data.wallets : [],
     walletTransfers: Array.isArray(data.walletTransfers) ? data.walletTransfers : [],
     monthlyPlans: Array.isArray(data.monthlyPlans) ? data.monthlyPlans : [],
+    agentMemory: Array.isArray(data.agentMemory) ? data.agentMemory : [],
   };
 }
 
@@ -166,6 +168,7 @@ export async function getDriveData(accessToken: string): Promise<{ data: DriveAp
         wallets: [],
         walletTransfers: [],
         monthlyPlans: [],
+        agentMemory: [],
       };
 
       const createRes = await drive.files.create({

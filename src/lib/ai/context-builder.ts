@@ -1,4 +1,4 @@
-import { DriveAppData } from "../types";
+import { DriveAppData, AgentMemoryEntry, ConversationState } from "../types";
 
 export interface FinancialContext {
   currentAvailable: number;
@@ -25,6 +25,8 @@ export interface FinancialContext {
   recentTransfers: Array<{ from: string; to: string; amount: number; date: string }>;
   upcomingMonthlyPlans: Array<{ title: string; amount: number; dueDate: string; category: string; priority: string; status: string; walletName?: string }>;
   totalPlannedUpcoming: number;
+  agentMemory: AgentMemoryEntry[];
+  conversationState?: ConversationState;
 }
 
 export async function buildFinancialContext(data: DriveAppData): Promise<FinancialContext> {
@@ -189,6 +191,7 @@ export async function buildFinancialContext(data: DriveAppData): Promise<Financi
       })),
     totalPlannedUpcoming: (data.monthlyPlans || [])
       .filter(p => p.status === "planned")
-      .reduce((sum, p) => sum + (Number(p.amount) || 0), 0)
+      .reduce((sum, p) => sum + (Number(p.amount) || 0), 0),
+    agentMemory: (data.agentMemory || []),
   };
 }

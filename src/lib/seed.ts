@@ -341,5 +341,6 @@ export function generateDemoData(): DriveAppData {
     wallets: [],
     walletTransfers: [],
     monthlyPlans: [],
+    agentMemory: [],
   };
 }

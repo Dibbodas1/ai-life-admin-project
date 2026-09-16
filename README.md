@@ -32,7 +32,7 @@ Managing modern life administration across scattered bank accounts, mobile finan
 
 **AI Life Admin** solves this by uniting **executive-level financial orchestration** with **private cloud storage**:
 - **Zero-Knowledge Data Privacy**: Your financial records never sit on an unauthorized third-party database. All transactions, wallets, and debts are encrypted and saved straight to your personal **Google Drive** (`ai-life-admin-data.json`).
-- **Conversational Intelligence**: Add transactions, request cashflow forecasts, evaluate major purchases, or check debt repayments using natural speech in **English** or **Banglish**.
+- **Intelligent Memory-Aware Copilot**: Add transactions, resolve complex follow-up questions using pronouns ("How much is in it?"), memorize personal rules, and execute tools using natural speech in **English** or **Banglish**.
 - **Real-Time Cross-Device Synchronization**: Zero-reload updates across multiple browser tabs, smartphones, tablets, and desktops using a unified event bus.
 
 ---
@@ -87,20 +87,26 @@ Managing modern life administration across scattered bank accounts, mobile finan
 
 ---
 
-## 🤖 Bilingual AI Copilot (English & Banglish)
+## 🧠 Intelligent Copilot & Persistent Memory (English & Banglish)
 
-The embedded AI Copilot understands natural conversational input in both English and Banglish (Bengali written in English letters).
+The embedded AI Copilot has evolved from a stateless command executor into a **memory-aware, context-aware personal assistant**. It understands natural conversational input in both English and Banglish, remembers your personal preferences, and tracks conversation state just like a real human.
+
+### 🌟 New Memory & Context Features
+- **Persistent Personal Facts**: The agent autonomously extracts and memorizes facts about your life (e.g., "My salary is 50k", "Never delete data without asking").
+- **Pronoun & Entity Resolution**: You can use natural pronouns like "it", "he", or "that account". The agent tracks the active conversation topic and resolves entities flawlessly.
+- **Privacy First (PII Rejection)**: Built-in regex safety validators automatically block sensitive data (PINs, Passwords, Card Numbers) from being stored in memory.
+- **Memory Deduplication**: The system merges conflicting facts and boosts confidence scores for recurring statements instead of duplicating data.
 
 ### Example Prompts Supported:
 
-| Language | Example Prompt | Action Executed by AI |
+| Category | Example Sequence | Action Executed by AI |
 | :--- | :--- | :--- |
-| **Banglish** | `"ami ajke 500 taka diye kachchi khasi khailam"` | Automatically logs ৳500 expense under **Food & Dining** with merchant "Kachchi". |
-| **Banglish** | `"amake rahim 2000 taka ferot dilo bKash e"` | Credits ৳2000 to **bKash wallet** and updates loan balance for Rahim. |
-| **Banglish** | `"agami 25 tarikh bari bhara 12000 taka dite hobe"` | Creates an obligation in **Monthly Planning** for House Rent due on the 25th. |
-| **English** | `"Spent $45 on Shell petrol using Credit Card"` | Records $45 under **Transport / Fuel** and debits Credit Card ledger. |
-| **English** | `"Received $1,200 freelance payment for UI design in Bank"` | Adds $1,200 to **Freelance Income** and deposits into Bank Vault. |
-| **English** | `"Can I afford to buy a $1,500 gaming laptop right now?"` | Launches **Purchase AI Decision Engine** and stress-tests against 14-day liabilities. |
+| **Memory & Tool Usage** | `"I opened a new City Bank account."`<br>`"Add 5000 tk to that account."` | Acknowledges the new account, then resolves "that account" to City Bank and adds 5000 tk. |
+| **Entity Resolution** | `"Tanvir borrowed 1000 tk."`<br>`"He returned 500 tk today."` | Logs loan. Resolves "He" to Tanvir and updates the loan balance. |
+| **State Persistence** | `"How much is in my bKash?"`<br>`"I spent 200 tk from it."` | Returns bKash balance. Resolves "it" to bKash and deducts 200 tk. |
+| **Banglish Expense** | `"ami ajke 500 taka diye kachchi khasi khailam"` | Automatically logs ৳500 expense under **Food & Dining** with merchant "Kachchi". |
+| **Banglish Planning** | `"agami 25 tarikh bari bhara 12000 taka dite hobe"` | Creates an obligation in **Monthly Planning** for House Rent due on the 25th. |
+| **AI Stress Test** | `"Can I afford to buy a $1,500 gaming laptop right now?"` | Launches **Purchase AI Decision Engine** and stress-tests against 14-day liabilities. |
 
 ---
 
@@ -113,7 +119,7 @@ flowchart LR
     subgraph Client["Your Browser / Mobile Device"]
         UI["Next.js 16 UI\n(Frosted Glassmorphism)"]
         Bus["Real-Time Event Bus\n(BroadcastChannel + State)"]
-        Agent["Gemini 2.0 AI Copilot\n(English & Banglish)"]
+        Agent["Gemini 3.5 Flash AI Copilot\n(English & Banglish)"]
     end
 
     subgraph GoogleCloud["Google Ecosystem (Private to You)"]
@@ -139,7 +145,7 @@ flowchart LR
 - **Core Library**: [React 19](https://react.dev/)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
 - **Styling**: Tailored Dark Frosted Glassmorphism with [Tailwind CSS v4](https://tailwindcss.com/) & Vanilla CSS Tokens
-- **AI Model**: [Google Gemini 2.0 Flash via @google/generative-ai](https://ai.google.dev/)
+- **AI Model**: [Google Gemini 3.5 Flash via @google/generative-ai](https://ai.google.dev/)
 - **Cloud Storage API**: [Google Drive API v3 via googleapis](https://developers.google.com/drive)
 - **Authentication**: [@react-oauth/google](https://www.npmjs.com/package/@react-oauth/google)
 - **Icons**: [Lucide React](https://lucide.dev/)
@@ -232,7 +238,7 @@ ai-life-admin/
 │   │   ├── shared/               # AIAssistantFloat, GoogleLoginButton
 │   │   └── ui/                   # Reusable glassmorphic UI components
 │   └── lib/
-│       ├── ai/gemini.ts          # Google Gemini 2.0 Flash SDK configuration
+│       ├── ai/gemini.ts          # Google Gemini 3.5 Flash SDK configuration
 │       ├── drive-db.ts           # Google Drive cloud sync & local fallback engine
 │       ├── types.ts              # Complete TypeScript interfaces & schemas
 │       └── utils.ts              # Event bus, currency formatters, apiFetch
