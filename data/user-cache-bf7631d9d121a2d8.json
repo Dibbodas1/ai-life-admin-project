@@ -13,28 +13,9 @@
       }
     }
   ],
-  "expenses": [
-    {
-      "_id": "538f0e93-bd9b-4125-ba55-622bbfbb1e48",
-      "userId": "user_1789462897989",
-      "amount": 650,
-      "merchant": "Lunch",
-      "category": "Food",
-      "walletName": "Cash",
-      "date": "2026-09-16T16:39:05.184Z"
-    }
-  ],
+  "expenses": [],
   "income": [],
-  "categories": [
-    {
-      "_id": "65651b5c-468a-46fa-b17d-5208badba5d1",
-      "userId": "user_1789462897989",
-      "name": "Food",
-      "type": "expense",
-      "color": "#6366F1",
-      "icon": "tag"
-    }
-  ],
+  "categories": [],
   "budgets": [],
   "subscriptions": [],
   "bills": [],
