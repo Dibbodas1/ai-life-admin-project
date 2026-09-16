@@ -7,7 +7,7 @@ import GoogleLoginButton from "@/components/shared/GoogleLoginButton";
 import {
   LayoutDashboard, Wallet, TrendingUp, Receipt,
   HandCoins, Sparkles, Target, Bot, CalendarClock,
-  X
+  X, MessageCircle
 } from "lucide-react";
 
 const navSections = [
@@ -28,6 +28,12 @@ const navSections = [
       { label: "Purchase AI Engine", href: "/insights/recommendations", icon: Sparkles },
       { label: "Goals & Runway", href: "/goals", icon: Target },
       { label: "AI Assistant", href: "/assistant", icon: Bot },
+    ],
+  },
+  {
+    title: "SETTINGS",
+    items: [
+      { label: "Telegram Bot", href: "/settings/telegram", icon: MessageCircle },
     ],
   },
 ];
