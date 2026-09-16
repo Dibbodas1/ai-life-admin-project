@@ -4,18 +4,15 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, Sparkles, HardDrive } from "lucide-react";
 
+import { useGoogleAuthToken } from "@/components/shared/GoogleLoginButton";
+
 export default function MobileHeader() {
+  const { token, isExpired } = useGoogleAuthToken();
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    const checkSync = () => {
-      const token = typeof window !== "undefined" ? localStorage.getItem("google_drive_token") : null;
-      setIsConnected(!!(token && token !== "dummy_demo_token" && token !== "demo_token"));
-    };
-    checkSync();
-    window.addEventListener("storage", checkSync);
-    return () => window.removeEventListener("storage", checkSync);
-  }, []);
+    setIsConnected(!!(token && token !== "dummy_demo_token" && token !== "demo_token"));
+  }, [token]);
 
   return (
     <header
@@ -110,17 +107,17 @@ export default function MobileHeader() {
       {/* Right: Cloud Sync Pill & Fast AI Trigger */}
       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
         <div
-          title={isConnected ? "Google Drive Synced" : "Google Drive Disconnected"}
+          title={isConnected ? (isExpired ? "Session Expired" : "Google Drive Synced") : "Google Drive Disconnected"}
           style={{
             display: "flex",
             alignItems: "center",
             gap: "5px",
             padding: "4px 8px",
             background: "rgba(255, 255, 255, 0.05)",
-            border: `1px solid ${isConnected ? "rgba(16, 185, 129, 0.3)" : "rgba(255, 255, 255, 0.08)"}`,
+            border: `1px solid ${isConnected ? (isExpired ? "rgba(251, 113, 133, 0.3)" : "rgba(16, 185, 129, 0.3)") : "rgba(255, 255, 255, 0.08)"}`,
             borderRadius: "9999px",
             fontSize: "11px",
-            color: isConnected ? "#34D399" : "#94A3B8",
+            color: isConnected ? (isExpired ? "#FB7185" : "#34D399") : "#94A3B8",
             fontWeight: 600,
           }}
         >
@@ -129,8 +126,8 @@ export default function MobileHeader() {
               width: "6px",
               height: "6px",
               borderRadius: "50%",
-              background: isConnected ? "#10B981" : "#64748B",
-              boxShadow: isConnected ? "0 0 6px #10B981" : "none",
+              background: isConnected ? (isExpired ? "#F43F5E" : "#10B981") : "#64748B",
+              boxShadow: isConnected ? (isExpired ? "0 0 6px #F43F5E" : "0 0 6px #10B981") : "none",
             }}
           />
           <HardDrive size={12} />

@@ -9,15 +9,17 @@ interface TopHeaderProps {
   onOpenAssistant?: () => void;
 }
 
+import { useGoogleAuthToken } from "@/components/shared/GoogleLoginButton";
+
 export default function TopHeader({ userName = "Alex", onOpenAssistant }: TopHeaderProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const { token, isExpired } = useGoogleAuthToken();
   const [isConnected, setIsConnected] = useState(false);
   const greeting = getGreeting();
 
   useEffect(() => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("google_drive_token") : null;
     setIsConnected(!!(token && token !== "dummy_demo_token" && token !== "demo_token"));
-  }, []);
+  }, [token]);
 
   return (
     <header style={{
@@ -51,7 +53,7 @@ export default function TopHeader({ userName = "Alex", onOpenAssistant }: TopHea
             lineHeight: 1.4,
           }}>
             {isConnected 
-              ? "Your Google Drive is synced. Orchestrating your finances in real-time."
+              ? (isExpired ? "Google Drive session expired. Please reconnect to resume real-time sync." : "Your Google Drive is synced. Orchestrating your finances in real-time.")
               : "Google Drive is disconnected. Connect Google Drive to load your live personal data."}
           </p>
         </div>
@@ -207,8 +209,8 @@ export default function TopHeader({ userName = "Alex", onOpenAssistant }: TopHea
             width: "28px",
             height: "28px",
             borderRadius: "50%",
-            background: isConnected 
-              ? "linear-gradient(135deg, #10B981 0%, #059669 100%)"
+            background: isConnected
+              ? (isExpired ? "linear-gradient(135deg, #F43F5E 0%, #E11D48 100%)" : "linear-gradient(135deg, #10B981 0%, #059669 100%)")
               : "rgba(255, 255, 255, 0.08)",
             color: "#FFFFFF",
             display: "flex",
@@ -217,14 +219,14 @@ export default function TopHeader({ userName = "Alex", onOpenAssistant }: TopHea
             fontWeight: 700,
             fontSize: "12px",
           }}>
-            {isConnected ? "☁️" : "✕"}
+            {isConnected ? (isExpired ? "⚠️" : "☁️") : "✕"}
           </div>
           <div>
-            <div style={{ fontSize: "12px", fontWeight: 700, color: isConnected ? "#34D399" : "#94A3B8", lineHeight: 1.1 }}>
-              {isConnected ? "Drive Connected" : "Drive Disconnected"}
+            <div style={{ fontSize: "12px", fontWeight: 700, color: isConnected ? (isExpired ? "#FB7185" : "#34D399") : "#94A3B8", lineHeight: 1.1 }}>
+              {isConnected ? (isExpired ? "Session Expired" : "Drive Connected") : "Drive Disconnected"}
             </div>
             <div style={{ fontSize: "10px", color: "var(--text-muted)", fontWeight: 500 }}>
-              {isConnected ? "Google Drive Cloud" : "No Cloud Sync"}
+              {isConnected ? (isExpired ? "Sync Paused" : "Google Drive Cloud") : "No Cloud Sync"}
             </div>
           </div>
         </div>
