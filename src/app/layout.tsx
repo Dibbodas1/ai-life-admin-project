@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Sidebar from "@/components/layout/Sidebar";
 import MobileHeader from "@/components/layout/MobileHeader";
@@ -8,6 +8,19 @@ import GoogleAuthProvider from "@/components/shared/GoogleAuthProvider";
 export const metadata: Metadata = {
   title: "AI Life Admin — Personal Finance & Life Copilot",
   description: "AI-powered personal life administration and finance copilot that maintains persistent understanding of your money, obligations, documents, and commitments.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "AI Life Admin",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0f172a",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
