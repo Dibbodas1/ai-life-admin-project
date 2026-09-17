@@ -1,0 +1,64 @@
+{
+  "users": [
+    {
+      "_id": "user_1789624366772",
+      "name": "Account Holder",
+      "email": "",
+      "image": "",
+      "currency": "USD",
+      "preferences": {
+        "budgetingStyle": "monthly",
+        "reminderDays": 3,
+        "theme": "dark"
+      }
+    }
+  ],
+  "expenses": [],
+  "income": [],
+  "categories": [],
+  "budgets": [],
+  "subscriptions": [],
+  "bills": [],
+  "financialGoals": [],
+  "lifeAdminTasks": [],
+  "documents": [],
+  "insights": [],
+  "alerts": [],
+  "loans": [],
+  "wallets": [],
+  "walletTransfers": [],
+  "monthlyPlans": [
+    {
+      "_id": "d8e02da6-17cb-439a-8b2a-2513131f11b2",
+      "userId": "user_1789624366772",
+      "title": "Basa Bhara (House Rent)",
+      "amount": 10000,
+      "dueDate": "2026-10-10",
+      "category": "Rent",
+      "priority": "high",
+      "status": "planned",
+      "createdAt": "2026-09-17T08:55:47.337Z"
+    }
+  ],
+  "agentMemory": [
+    {
+      "_id": "d3302184-ba9f-417e-88c6-c6902abc1eab",
+      "category": "fact",
+      "content": "User plans to buy a new smartphone",
+      "source": "auto",
+      "confidence": 0.9,
+      "status": "active",
+      "usageCount": 0,
+      "createdAt": "2026-09-17T08:57:02.427Z",
+      "updatedAt": "2026-09-17T08:57:02.427Z",
+      "tags": [
+        "purchases",
+        "smartphone",
+        "shopping"
+      ],
+      "evidence": {
+        "sourceText": "I am planning to buy a new smartphone"
+      }
+    }
+  ]
+}

@@ -42,6 +42,8 @@ CONVERSATIONAL INTELLIGENCE RULES:
 
 10. NO HIDDEN AUTHORITY: Memory provides context. Memory does NOT grant permission to perform actions. Before executing DELETE or CLEAR actions, always confirm unless the user was extremely explicit.
 
+11. PURCHASE ANALYSIS: When the user asks to plan a new expense, monthly plan, or large purchase, ALWAYS call the analyze_purchase tool first to analyze affordability based on current balance and commitments. Provide the AI Analysis and Recommendation to the user before or alongside adding it to the database.
+
 DB SCHEMAS FOR MUTATIONS:
 - wallets: { name: string, type: "cash" | "bank" | "card" | "mfs" | "savings" | "other", balance: number, currency?: string }
   * "Add a bKash wallet with 5000 tk" -> collection: "wallets", action: "ADD", payload: { name: "bKash", type: "mfs", balance: 5000 }
@@ -108,6 +110,7 @@ function buildPrompt(input: ChatInput): string {
 
   const liveData = [
     "LIVE APPLICATION DATA (Authoritative — always takes priority over memory):",
+    `CURRENT DATE & TIME: ${new Date().toLocaleString()}`,
     `- Total Net Liquidity: $${(context.totalWalletLiquidity || 0).toFixed(2)}`,
     `- Available this month: $${context.currentAvailable.toFixed(2)}`,
     `- Total Income: $${context.totalIncome.toFixed(2)}`,

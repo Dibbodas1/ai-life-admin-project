@@ -25,6 +25,18 @@ const tools = [{
       },
       required: ["collection", "action"]
     }
+  },
+  {
+    name: "analyze_purchase",
+    description: "Analyze a planned expense or purchase to see if it is affordable, calculate its impact on runway and goals, and get AI recommendations. Use this when the user asks if they can afford something or wants suggestions on a new expense.",
+    parameters: {
+      type: SchemaType.OBJECT,
+      properties: {
+        amount: { type: SchemaType.NUMBER, description: "The amount of the planned purchase or expense" },
+        description: { type: SchemaType.STRING, description: "A brief description of the purchase" }
+      },
+      required: ["amount", "description"]
+    }
   }]
 }];
 
@@ -58,8 +70,37 @@ export async function POST(req: NextRequest) {
     let convState: ConversationState = clientConvState || createConversationState();
 
     let hasMutated = false;
+    let context: any; // Declared here for tool executors to access
     
     const toolExecutors = {
+      analyze_purchase: async (args: { amount: number; description: string }) => {
+        try {
+          const { analyzePurchase } = await import("@/lib/ai/purchase-engine");
+          if (!context) {
+            context = await buildFinancialContext(data);
+            context.conversationState = convState;
+          }
+          const analysis = await analyzePurchase(args.amount, args.description, context);
+          
+          return {
+            success: true,
+            affordable: analysis.affordable,
+            safetyScore: analysis.safetyScore,
+            verdictBadge: analysis.verdictBadge,
+            impact: analysis.impact,
+            aiAnalysis: analysis.aiAnalysis,
+            recommendation: analysis.recommendation,
+            alternativeStrategies: analysis.alternativeStrategies,
+            detailedMetrics: {
+               totalLiquidity: analysis.totalLiquidity,
+               afterPurchase: analysis.afterPurchase,
+               remainingAfterAllObligations: analysis.remainingAfterAllObligations
+            }
+          };
+        } catch (e) {
+          return { success: false, error: String(e) };
+        }
+      },
       mutate_database: async (args: { collection: string; action: string; id?: string; query?: string; payload?: string }) => {
         try {
           if (!token || token === "demo_token" || token === "dummy_demo_token") {
@@ -427,8 +468,10 @@ export async function POST(req: NextRequest) {
     };
 
     // ─── Build context & generate response ──────────────────────────────
-    const context = await buildFinancialContext(data);
-    context.conversationState = convState;
+    if (!context) {
+      context = await buildFinancialContext(data);
+      context.conversationState = convState;
+    }
 
     const response = await chatWithAssistant({
       userMessage: message,
