@@ -1,0 +1,219 @@
+{
+  "users": [
+    {
+      "_id": "user_1789462897989",
+      "name": "Account Holder",
+      "email": "",
+      "image": "",
+      "currency": "USD",
+      "preferences": {
+        "budgetingStyle": "monthly",
+        "reminderDays": 3,
+        "theme": "dark"
+      }
+    }
+  ],
+  "expenses": [
+    {
+      "_id": "a9355aaa-662f-43fa-9edb-5785354eabd4",
+      "userId": "user_1789462897989",
+      "amount": 20,
+      "merchant": "Gari bhara",
+      "category": "Transport",
+      "walletName": "Pocket Money",
+      "date": "2026-09-17T08:06:34.112Z",
+      "walletId": "c4ec47d0-e6da-4372-bda6-241f01c2dd94"
+    },
+    {
+      "_id": "00caa6a3-2296-4558-b1f0-8586bd835db6",
+      "userId": "user_1789462897989",
+      "amount": 10,
+      "merchant": "Food",
+      "category": "Food",
+      "walletName": "Cash",
+      "date": "2026-09-17T10:32:37.871Z",
+      "walletId": "c4ec47d0-e6da-4372-bda6-241f01c2dd94"
+    },
+    {
+      "_id": "f203200e-b794-4507-9218-e3e793f94f73",
+      "userId": "user_1789462897989",
+      "amount": 20,
+      "merchant": "Sigara",
+      "category": "Food",
+      "walletName": "Cash",
+      "date": "2026-09-17T11:27:16.549Z",
+      "walletId": "c4ec47d0-e6da-4372-bda6-241f01c2dd94"
+    },
+    {
+      "_id": "cb40f38a-983e-4916-955c-6a20c4ed3eec",
+      "userId": "user_1789462897989",
+      "amount": 75,
+      "merchant": "Gari bhara",
+      "category": "Transport",
+      "walletName": "Cash",
+      "date": "2026-09-17T15:03:15.263Z",
+      "walletId": "c4ec47d0-e6da-4372-bda6-241f01c2dd94"
+    },
+    {
+      "_id": "ff5a4c71-8b9a-4729-a6ca-c4fb60d80f8b",
+      "userId": "user_1789462897989",
+      "amount": 300,
+      "merchant": "Restaurant",
+      "category": "Food",
+      "walletName": "Cash",
+      "date": "2026-09-17T15:03:37.958Z",
+      "walletId": "c4ec47d0-e6da-4372-bda6-241f01c2dd94"
+    },
+    {
+      "_id": "b783b770-5994-40c4-9c1e-ef8d2a58f601",
+      "userId": "user_1789462897989",
+      "amount": 5,
+      "merchant": "Cha",
+      "category": "Food",
+      "walletName": "Cash",
+      "date": "2026-09-17T15:06:07.018Z",
+      "walletId": "c4ec47d0-e6da-4372-bda6-241f01c2dd94"
+    }
+  ],
+  "income": [
+    {
+      "_id": "80a7e282-909e-44d0-8722-3f69782e53ff",
+      "userId": "user_1789462897989",
+      "amount": 100,
+      "source": "Dokan",
+      "category": "Shop Income",
+      "walletName": "Pocket Money",
+      "date": "2026-09-17T08:03:50.738Z",
+      "walletId": "c4ec47d0-e6da-4372-bda6-241f01c2dd94"
+    }
+  ],
+  "categories": [
+    {
+      "_id": "482e51a9-1dab-49f6-a20b-2da4fd6e4fc7",
+      "userId": "user_1789462897989",
+      "name": "Transport",
+      "type": "expense",
+      "color": "#6366F1",
+      "icon": "tag"
+    },
+    {
+      "_id": "2453a94f-844d-4f2c-91ff-ff0cd44c788d",
+      "userId": "user_1789462897989",
+      "name": "Food",
+      "type": "expense",
+      "color": "#6366F1",
+      "icon": "tag"
+    }
+  ],
+  "budgets": [],
+  "subscriptions": [],
+  "bills": [],
+  "financialGoals": [
+    {
+      "_id": "14b89f53-b114-451b-adee-5fafcbd8ffbc",
+      "userId": "user_1789462897989",
+      "name": "Savings",
+      "targetAmount": 10000,
+      "currentAmount": 0,
+      "deadline": "2027-09-17T08:16:49.349Z",
+      "priority": "medium",
+      "status": "active",
+      "monthlyContribution": 834
+    }
+  ],
+  "lifeAdminTasks": [],
+  "documents": [],
+  "insights": [],
+  "alerts": [],
+  "loans": [
+    {
+      "_id": "a9414629-7bec-4f25-94dc-99449759dc98",
+      "userId": "user_1789462897989",
+      "personName": "Raj",
+      "type": "borrowed",
+      "amount": 5380,
+      "notes": "Raj amar theke abar 100 tk pabe",
+      "status": "active",
+      "createdAt": "2026-09-17T14:55:12.910Z",
+      "history": [
+        {
+          "_id": "0253a6f1-0dbc-4ca7-88ee-7f3ffca6e6ed",
+          "amount": 100,
+          "type": "borrowed",
+          "date": "2026-09-17T14:55:12.910Z",
+          "notes": "Raj amar theke abar 100 tk pabe"
+        }
+      ]
+    }
+  ],
+  "wallets": [
+    {
+      "_id": "ffdcb00a-2858-4fc2-96a3-b60764b94c77",
+      "userId": "user_1789462897989",
+      "name": "bkash",
+      "type": "mfs",
+      "balance": 80,
+      "currency": "BDT",
+      "color": "#EC4899",
+      "icon": "Smartphone",
+      "createdAt": "2026-09-17T08:02:00.542Z"
+    },
+    {
+      "_id": "c4ec47d0-e6da-4372-bda6-241f01c2dd94",
+      "userId": "user_1789462897989",
+      "name": "Cash",
+      "type": "cash",
+      "balance": 20,
+      "currency": "BDT",
+      "color": "#10B981",
+      "icon": "Wallet",
+      "createdAt": "2026-09-17T08:02:00.542Z"
+    },
+    {
+      "_id": "e2ed991c-11a7-4a1e-be58-46b784a29337",
+      "userId": "user_1789462897989",
+      "name": "IIBL",
+      "type": "bank",
+      "balance": 0,
+      "currency": "BDT",
+      "color": "#3B82F6",
+      "icon": "Landmark",
+      "createdAt": "2026-09-17T08:02:00.542Z"
+    }
+  ],
+  "walletTransfers": [],
+  "monthlyPlans": [],
+  "agentMemory": [
+    {
+      "_id": "1ced70cd-a17b-4b42-a9bb-cbcbc1cea3aa",
+      "userId": "user_1789462897989",
+      "fact": "User's wallets are bkash ($80.00), Cash ($430.00), and IIBL ($0.00)."
+    },
+    {
+      "_id": "8159cbbd-e31d-4b38-bed1-ea1f1252ad9f",
+      "userId": "user_1789462897989",
+      "memory": "By default, record all expenses from the Cash wallet unless specified otherwise.",
+      "category": "preference"
+    },
+    {
+      "_id": "38e4efcb-23ed-422d-88ac-3eb142250889",
+      "category": "preference",
+      "content": "User's default expense wallet is Cash",
+      "source": "auto",
+      "confidence": 1,
+      "status": "active",
+      "usageCount": 0,
+      "createdAt": "2026-09-17T08:13:42.500Z",
+      "updatedAt": "2026-09-17T08:13:42.500Z",
+      "tags": [
+        "expense",
+        "wallet",
+        "default",
+        "cash"
+      ],
+      "evidence": {
+        "sourceText": "Ami jokhon tomake expense/khoroc er kotha bolbo tumi seta by default Cash wallet theke katbe r jodi onno wallet theke katte hoi taile ami tomak bole dibo"
+      }
+    }
+  ]
+}

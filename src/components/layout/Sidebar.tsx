@@ -10,6 +10,21 @@ import {
   X, MessageCircle
 } from "lucide-react";
 
+const GithubIcon = ({ size = 24, color = "currentColor", ...props }: any) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.2c3-.3 6-1.5 6-6.5a5.5 5.5 0 0 0-1.5-3.8 5.2 5.2 0 0 0-.1-3.8s-1.2-.4-3.9 1.4a13.3 13.3 0 0 0-7 0C6.2 3.4 5 3.8 5 3.8a5.2 5.2 0 0 0-.1 3.8 5.5 5.5 0 0 0-1.5 3.8c0 5 3 6.2 6 6.5a4.8 4.8 0 0 0-1 3.2v4" />
+    <path d="M9 18c-4.5 1.5-5-2.5-7-3" />
+  </svg>
+);
+
+const LinkedinIcon = ({ size = 24, color = "currentColor", ...props }: any) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+    <rect width="4" height="12" x="2" y="9" />
+    <circle cx="4" cy="4" r="2" />
+  </svg>
+);
+
 const navSections = [
   {
     title: "MENU",
@@ -34,6 +49,13 @@ const navSections = [
     title: "SETTINGS",
     items: [
       { label: "Telegram Bot", href: "/settings/telegram", icon: MessageCircle },
+    ],
+  },
+  {
+    title: "CONNECT",
+    items: [
+      { label: "LinkedIn", href: "https://www.linkedin.com/in/dibbodas/", icon: LinkedinIcon, external: true },
+      { label: "GitHub", href: "https://github.com/Dibbodas1", icon: GithubIcon, external: true },
     ],
   },
 ];
@@ -193,6 +215,22 @@ export default function Sidebar() {
               {section.items.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
+                
+                if ("external" in item && item.external) {
+                  return (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`sidebar-link`}
+                    >
+                      <Icon size={18} />
+                      <span style={{ fontSize: "13.5px" }}>{item.label}</span>
+                    </a>
+                  );
+                }
+
                 return (
                   <Link
                     key={item.href}
